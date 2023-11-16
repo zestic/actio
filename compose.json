@@ -1,0 +1,13 @@
+{
+  "name": "actiophp/actio",
+  "description": "Logging and reporting of activities and events",
+  "license": "MIT",
+  "require": {
+    "php": "^8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Actio\\": "src/"
+    }
+  }
+}
