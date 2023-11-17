@@ -19,9 +19,11 @@ class DataPoint
         return $this->activity;
     }
 
-    public function setActivity(array $activity): void
+    public function setActivity(array $activity): DataPoint
     {
         $this->activity = $activity;
+
+        return $this;
     }
 
     public function getActor(): array
@@ -29,9 +31,11 @@ class DataPoint
         return $this->actor;
     }
 
-    public function setActor(array $actor): void
+    public function setActor(array $actor): DataPoint
     {
         $this->actor = $actor;
+
+        return $this;
     }
 
     public function getContext(): ?array
@@ -39,9 +43,11 @@ class DataPoint
         return $this->context;
     }
 
-    public function setContext(?array $context): void
+    public function setContext(?array $context): DataPoint
     {
         $this->context = $context;
+
+        return $this;
     }
 
     public function getDate(): \DateTimeImmutable
@@ -49,9 +55,11 @@ class DataPoint
         return $this->date;
     }
 
-    public function setDate(\DateTimeImmutable $date): void
+    public function setDate(\DateTimeImmutable $date): DataPoint
     {
         $this->date = $date;
+
+        return $this;
     }
 
     public function getId(): int|string
@@ -59,9 +67,11 @@ class DataPoint
         return $this->id;
     }
 
-    public function setId(int|string $id): void
+    public function setId(int|string $id): DataPoint
     {
         $this->id = $id;
+
+        return $this;
     }
 
     public function getLevel(): ?string
@@ -69,9 +79,11 @@ class DataPoint
         return $this->level;
     }
 
-    public function setLevel(?string $level): void
+    public function setLevel(?string $level): DataPoint
     {
         $this->level = $level;
+
+        return $this;
     }
 
     public function getSummary(): ?string
@@ -79,9 +91,11 @@ class DataPoint
         return $this->summary;
     }
 
-    public function setSummary(?string $summary): void
+    public function setSummary(?string $summary): DataPoint
     {
         $this->summary = $summary;
+
+        return $this;
     }
 
     public function getTarget(): array
@@ -89,9 +103,11 @@ class DataPoint
         return $this->target;
     }
 
-    public function setTarget(array $target): void
+    public function setTarget(array $target): DataPoint
     {
         $this->target = $target;
+
+        return $this;
     }
 
     public function __toString(): string
