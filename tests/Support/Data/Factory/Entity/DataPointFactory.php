@@ -36,21 +36,34 @@ class DataPointFactory extends AbstractFactory
 
     private function createActivity(): array
     {
-        return [];
+        return [
+            'type' => $this->faker->word(),
+        ];
     }
 
     private function createActor(): array
     {
-        return [];
+        return [
+            'type' => $this->faker->word(),
+        ];
     }
 
     private function createContext(): array
     {
-        return [];
+        $items = $this->faker->numberBetween(3,6);
+        $context = [];
+        for ($i = 0; $i < $items; $i++) {
+            $key = $this->faker->word();
+            $context[$key] = $this->faker->sentence();
+        }
+
+        return $context;
     }
 
     private function createTarget(): array
     {
-        return [];
+        return [
+            'type' => $this->faker->word(),
+        ];
     }
 }
