@@ -9,7 +9,7 @@ class DataPoint
     private array $actor;
     private ?array $context;
     private \DateTimeImmutable $date;
-    private int|string $id;
+    private int|string|null $id;
     private ?string $level;
     private ?string $summary;
     private array $target;
@@ -62,12 +62,12 @@ class DataPoint
         return $this;
     }
 
-    public function getId(): int|string
+    public function getId(): int|string|null
     {
         return $this->id;
     }
 
-    public function setId(int|string $id): DataPoint
+    public function setId(int|string|null $id): DataPoint
     {
         $this->id = $id;
 

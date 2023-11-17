@@ -8,50 +8,49 @@ use Tests\Support\Data\Factory\AbstractFactory;
 
 class DataPointFactory extends AbstractFactory
 {
-    protected function create(array $override): mixed
+    protected function create(array $override): DataPoint
     {
-        $activity = isset($override['activity'])? $override['activity'] : $this->createActivity();
-        $actor    = isset($override['actor'])   ? $override['actor']    : $this->createActor();
-        $context  = isset($override['context'])? $override['context']  : $this->createContext();
-        $date  = isset($override['date'])? $override['date']  : new \DateTimeImmutable();
-        $id      = isset($override['id'])?? $override['id'];
-        $level    = isset($override['level'])? $override['level'] : $this->faker->randomElement(['debug', 'info', 'notice', 'warning', 'error']);
-        $summary  = isset($override['summary'])? $override['summary'] : $this->faker->sentence;
-        $target   = isset($override['target'])? $override['target'] : $this->createTarget();
+        $activity = $override['activity'] ?? $this->createActivity();
+        $actor = $override['actor'] ?? $this->createActor();
+        $context = $override['context'] ?? $this->createContext();
+        $date = $override['date'] ?? new \DateTimeImmutable();
+        $id = $override['id'] ?? null;
+        $level = $override['level'] ?? $this->faker->randomElement(
+            ['debug', 'info', 'notice', 'warning', 'error']
+        );
+        $summary = $override['summary'] ?? $this->faker->sentence();
+        $target = $override['target'] ?? $this->createTarget();
 
         $dataPoint = (new DataPoint())
             ->setActivity($activity)
             ->setActor($actor)
             ->setContext($context)
             ->setDate($date)
+            ->setId($id)
             ->setLevel($level)
             ->setSummary($summary)
             ->setTarget($target);
-
-        if ($id !== null) {
-            $dataPoint->setId($id);
-        }
 
         return $dataPoint;
     }
 
     private function createActivity(): array
     {
-
+        return [];
     }
 
     private function createActor(): array
     {
-
+        return [];
     }
 
     private function createContext(): array
     {
-
+        return [];
     }
 
     private function createTarget(): array
     {
-
+        return [];
     }
 }
