@@ -3,25 +3,42 @@ declare(strict_types=1);
 
 namespace Tests\Support\Data\Factory\Entity;
 
-use Actio\Actio\Entity\DataPoint;
+use Actio\Entity\DataPoint;
+use DateTimeImmutable;
 use Tests\Support\Data\Factory\AbstractFactory;
+
+use function PHPUnit\Framework\arrayHasKey;
 
 class DataPointFactory extends AbstractFactory
 {
-    protected function create(array $override): DataPoint
+    protected function create(array $override): DataPoint|array
     {
+        $asArray = isset($override['asArray']) && $override['asArray'] === true;
         $activity = $override['activity'] ?? $this->createActivity();
         $actor = $override['actor'] ?? $this->createActor();
         $context = $override['context'] ?? $this->createContext();
-        $date = $override['date'] ?? new \DateTimeImmutable();
+        $date = $this->determineDate($override);
         $id = $override['id'] ?? null;
         $level = $override['level'] ?? $this->faker->randomElement(
-            ['debug', 'info', 'notice', 'warning', 'error']
+            ['debug', 'info', 'notice', 'warning', 'error', null]
         );
         $summary = $override['summary'] ?? $this->faker->sentence();
         $target = $override['target'] ?? $this->createTarget();
 
-        $dataPoint = (new DataPoint())
+        if ($asArray) {
+            return [
+                'activity' => $activity,
+                'actor'    => $actor,
+                'context'  => $context,
+                'date'     => $date,
+                'id'       => $id,
+                'level'    => $level,
+                'summary'  => $summary,
+                'target'   => $target,
+            ];
+        }
+
+        return (new DataPoint())
             ->setActivity($activity)
             ->setActor($actor)
             ->setContext($context)
@@ -30,8 +47,6 @@ class DataPointFactory extends AbstractFactory
             ->setLevel($level)
             ->setSummary($summary)
             ->setTarget($target);
-
-        return $dataPoint;
     }
 
     private function createActivity(): array
@@ -65,5 +80,14 @@ class DataPointFactory extends AbstractFactory
         return [
             'type' => $this->faker->word(),
         ];
+    }
+
+    private function determineDate(array $override): ?DateTimeImmutable
+    {
+        if (array_key_exists('date', $override)) {
+            return $override['date'];
+        }
+
+        return new \DateTimeImmutable();
     }
 }

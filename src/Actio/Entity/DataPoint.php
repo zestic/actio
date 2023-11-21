@@ -1,15 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace Actio\Actio\Entity;
+namespace Actio\Entity;
+
+use DateTimeImmutable;
 
 class DataPoint
 {
     private array $activity;
     private array $actor;
     private ?array $context;
-    private \DateTimeImmutable $date;
-    private int|string|null $id;
+    private DateTimeImmutable $date;
+    private int|string|null $id = null;
     private ?string $level;
     private ?string $summary;
     private array $target;
@@ -50,14 +52,16 @@ class DataPoint
         return $this;
     }
 
-    public function getDate(): \DateTimeImmutable
+    public function getDate(): DateTimeImmutable
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeImmutable $date): DataPoint
+    public function setDate(?DateTimeImmutable $date): DataPoint
     {
-        $this->date = $date;
+        if ($date) {
+            $this->date = $date;
+        }
 
         return $this;
     }
