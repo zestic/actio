@@ -10,7 +10,7 @@ class DataPoint
     private array $activity;
     private array $actor;
     private ?array $context;
-    private DateTimeImmutable $date;
+    private ?DateTimeImmutable $date = null;
     private int|string|null $id = null;
     private ?string $level;
     private ?string $summary;
@@ -121,15 +121,22 @@ class DataPoint
 
     public function toArray(): array
     {
-        return [
+        $data = [
             'activity' => $this->activity,
             'actor'    => $this->actor,
             'context'  => $this->context,
-            'date'     => $this->date->format('Y-m-d\TH:i:s\Z'),
-            'id'       => $this->id,
             'level'    => $this->level,
             'summary'  => $this->summary,
             'target'   => $this->target,
         ];
+
+        if ($this->id!== null) {
+            $data['id'] = $this->id;
+        }
+        if ($this->date!== null) {
+            $data['date'] = $this->date->format('Y-m-d\TH:i:s\Z');
+        }
+
+        return $data;
     }
 }
