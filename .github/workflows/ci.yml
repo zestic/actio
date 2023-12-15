@@ -6,7 +6,22 @@ jobs:
     ci:
         runs-on: ubuntu-latest
 
+        env:
+            ACTIO_MYSQL_DB_NAME: test
+            ACTIO_MYSQL_HOST: 127.0.0.1
+            ACTIO_MYSQL_PASSWORD: root
+            ACTIO_MYSQL_TABLE: actio
+            ACTIO_MYSQL_USERNAME: root
+            DB_DATABASE: test
+            DB_USER: root
+            DB_PASSWORD: root
+
         steps:
+            - name: Start MySQL
+              run: |
+                sudo /etc/init.d/mysql start
+                mysql -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;" -u$DB_USER -p$DB_PASSWORD            
+
             - name: Checkout
               uses: actions/checkout@v3
 
