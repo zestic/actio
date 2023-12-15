@@ -1,6 +1,25 @@
 # ActioPHP
 
+## Installation
+Install the latest version:
 ```bash
 composer require actiophp/actio
 ```
-can be used as a PSR-3 Logger. The activity type gets set to "PSR3" and the message is stored in the summary property
+
+## Usage
+Actio::setHandler($handler);
+
+
+## Tests
+To test copy .env.testing to .env
+
+```bash
+composer install
+```
+
+```bash
+vendor/bin/pest
+```
+
+### Credits
+Code and ideas borrowed from https://github.com/jbroadway/analog
