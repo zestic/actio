@@ -9,7 +9,8 @@
   "require-dev": {
     "ext-pdo": "*",
     "fakerphp/faker": "^1.23",
-    "pestphp/pest": "^2.24"
+    "pestphp/pest": "^2.24",
+    "symfony/dotenv": "^6.4"
   },
   "autoload": {
     "psr-4": {

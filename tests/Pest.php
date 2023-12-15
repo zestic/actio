@@ -11,6 +11,10 @@
 |
 */
 
+(new Symfony\Component\Dotenv\Dotenv())
+    ->usePutenv()
+    ->load(__DIR__.'/../.env');
+
 // uses(Tests\TestCase::class)->in('Feature');
 
 /*

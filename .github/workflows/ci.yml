@@ -10,7 +10,7 @@ jobs:
             ACTIO_MYSQL_DB_NAME: test
             ACTIO_MYSQL_HOST: 127.0.0.1
             ACTIO_MYSQL_PASSWORD: root
-            ACTIO_MYSQL_TABLE: actio
+            ACTIO_MYSQL_TABLE: actio_data_points
             ACTIO_MYSQL_USERNAME: root
             DB_DATABASE: test
             DB_USER: root

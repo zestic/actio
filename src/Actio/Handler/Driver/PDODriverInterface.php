@@ -8,7 +8,7 @@ use Actio\Entity\DataPoint;
 
 interface PDODriverInterface
 {
-    public function createTable(): void;
+    public function createTable(): bool;
 
     public function save(DataPoint $dataPoint): bool;
 }
