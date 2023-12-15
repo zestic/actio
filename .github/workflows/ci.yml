@@ -32,6 +32,12 @@ jobs:
                   tools: composer:v2
                   coverage: xdebug
 
+            - name: copy .env file
+              uses: canastro/copy-file-action@master
+              with:
+                  source: ".env.testing"
+                  target: ".env"
+
             - name: Install Dependencies
               run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
