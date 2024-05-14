@@ -18,7 +18,11 @@ class MySQLPDODriver implements PDODriverInterface
         $username = getenv('ACTIO_MYSQL_USERNAME');
         $dsn = "mysql:host={$host};dbname={$dbname};charset=utf8mb4";
         $this->db = new PDO($dsn, $username, $password);
-        $this->table = getenv('ACTIO_MYSQL_TABLE') ?? 'actio_data_points';
+        $table = getenv('ACTIO_MYSQL_TABLE');
+        if (!$table) {
+            $table = 'actio_data_points';
+        }
+        $this->table = $table;
     }
 
     public function createTable(): bool
