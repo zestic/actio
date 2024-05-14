@@ -6,6 +6,7 @@ namespace Actio;
 
 use Actio\Entity\DataPoint;
 use Actio\Factory\DataPointFactory;
+use JsonSerializable;
 
 class Actio
 {
@@ -17,9 +18,9 @@ class Actio
     }
 
     public static function record(
-        array|string $activity,
-        array|string $actor,
-        array|string $target,
+        array|JsonSerializable|string $activity,
+        array|JsonSerializable|string $actor,
+        array|JsonSerializable|string $target,
         ?string $summary = null,
         ?array $context = null,
         ?string $level = null,

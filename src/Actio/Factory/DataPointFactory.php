@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Actio\Factory;
 
 use Actio\Entity\DataPoint;
+use JsonSerializable;
 
 class DataPointFactory
 {
     public function createFromRecord(
-        array|string $activity,
-        array|string $actor,
-        array|string $target,
+        array|JsonSerializable|string $activity,
+        array|JsonSerializable|string $actor,
+        array|JsonSerializable|string $target,
         ?string $summary,
         ?array $context,
         ?string $level,
@@ -30,10 +31,13 @@ class DataPointFactory
         ;
     }
 
-    private function prepareForArray(string|array $value): array
+    private function prepareForArray(string|JsonSerializable|array $value): array
     {
         if (is_string($value)) {
             return json_decode($value, true);
+        }
+        if (is_object($value)) {
+            return $value->jsonSerialize();
         }
 
         return $value;
