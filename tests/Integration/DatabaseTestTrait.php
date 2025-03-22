@@ -61,9 +61,27 @@ trait DatabaseTestTrait
             throw new RuntimeException('ACTIO_MYSQL_DB_NAME environment variable is not set');
         }
 
-        $rootDsn = 'mysql:host=' . $host . ';port=3306;charset=utf8mb4';
-        $connection = new PDO($rootDsn, $username, $password);
-        $connection->exec("CREATE DATABASE IF NOT EXISTS {$dbName}");
+        $attempts = 3;
+        $lastError = null;
+        while ($attempts > 0) {
+            try {
+                $rootDsn = 'mysql:host=' . $host . ';charset=utf8mb4';
+                $connection = new PDO($rootDsn, $username, $password, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_TIMEOUT => 3,
+                ]);
+                $connection->exec("CREATE DATABASE IF NOT EXISTS {$dbName}");
+                return;
+            } catch (\PDOException $e) {
+                $lastError = $e;
+                $attempts--;
+                if ($attempts > 0) {
+                    sleep(2);
+                }
+            }
+        }
+        throw new \RuntimeException('Failed to connect to MySQL after 3 attempts: ' . $lastError->getMessage(), 0, $lastError);
+
     }
 
     public static function tearDownAfterClass(): void
