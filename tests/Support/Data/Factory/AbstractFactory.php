@@ -22,10 +22,9 @@ abstract class AbstractFactory
      * @param array<string, mixed>|null $override
      * @return T
      */
-    public static function make(array $override = null): mixed
+    public static function make(array $override = []): mixed
     {
         $factory = static::createFactory();
-        $override = $override ? (array)$override : [];
 
         return $factory->create($override);
     }
@@ -42,9 +41,7 @@ abstract class AbstractFactory
     ): array {
         $objects = [];
         $factory = static::createFactory();
-        $globalOverride = $globalOverride ? (array)$globalOverride : [];
         for ($i = 0; $i < $total; $i++) {
-            $individualOverrides = $individualOverrides ? (array)$individualOverrides : [];
             $objects[] = $factory->create($globalOverride + $individualOverrides);
         }
 

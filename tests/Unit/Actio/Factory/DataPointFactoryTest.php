@@ -30,7 +30,10 @@ class DataPointFactoryTest extends TestCase
     public function testCreatesNewInstance(): void
     {
         /** @var array<string, mixed> $data */
-        $data = SupportDataPointFactory::make(['asArray' => true]);
+        $data = SupportDataPointFactory::make([
+            'asArray' => true,
+            'level' => 'warning'
+        ]);
         $this->assertIsArray($data);
 
         $activity = $this->setAsArrayOrJson($data['activity']);

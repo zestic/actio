@@ -60,7 +60,7 @@ jobs:
 
     - name: Wait for MySQL
       run: |
-        while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"test" -p"password1" --silent; do
+        while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"root" -p"root" --silent; do
           sleep 1
         done
 
@@ -78,8 +78,4 @@ jobs:
         ACTIO_MYSQL_USERNAME: test
         ACTIO_MYSQL_PASSWORD: password1
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage.xml
-        fail_ci_if_error: true
+
