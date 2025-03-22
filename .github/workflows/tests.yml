@@ -18,15 +18,14 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: actio_test
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -u root -proot"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+          --health-cmd="mysqladmin ping"
+          --health-interval=5s
+          --health-timeout=2s
+          --health-retries=5
 
     steps:
     - uses: actions/checkout@v3
@@ -56,15 +55,20 @@ jobs:
     - name: Install MySQL client
       run: sudo apt-get install -y mysql-client
 
-    - name: Wait for MySQL
+    - name: Setup MySQL
       run: |
         sudo apt-get update
         sudo apt-get install -y mysql-client
-        while ! mysqladmin ping -h"localhost" -u"root" -p"root" --silent; do
-          echo "Waiting for MySQL..."
-          sleep 2
-        done
-        mysql -h"localhost" -u"root" -p"root" -e "CREATE DATABASE IF NOT EXISTS actio_test;"
+        echo "Checking MySQL status..."
+        sudo service mysql status || true
+        echo "Checking MySQL process..."
+        ps aux | grep mysql || true
+        echo "Checking MySQL socket..."
+        ls -la /var/run/mysqld/ || true
+        echo "Attempting connection..."
+        mysqladmin ping -h"127.0.0.1" --port=3306 -u"root" -p"root" || true
+        echo "Creating database..."
+        mysql -h"127.0.0.1" --port=3306 -u"root" -p"root" -e "CREATE DATABASE IF NOT EXISTS actio_test;" || true
 
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
@@ -75,7 +79,7 @@ jobs:
     - name: Run Tests with Coverage
       run: vendor/bin/phpunit --coverage-clover coverage.xml
       env:
-        ACTIO_MYSQL_HOST: localhost
+        ACTIO_MYSQL_HOST: 127.0.0.1
         ACTIO_MYSQL_DB_NAME: actio_test
         ACTIO_MYSQL_USERNAME: root
         ACTIO_MYSQL_PASSWORD: root
