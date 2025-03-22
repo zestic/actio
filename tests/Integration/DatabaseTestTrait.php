@@ -61,7 +61,7 @@ trait DatabaseTestTrait
             throw new RuntimeException('ACTIO_MYSQL_DB_NAME environment variable is not set');
         }
 
-        $rootDsn = 'mysql:host=' . $host;
+        $rootDsn = 'mysql:host=' . $host . ';port=3306;charset=utf8mb4';
         $connection = new PDO($rootDsn, $username, $password);
         $connection->exec("CREATE DATABASE IF NOT EXISTS {$dbName}");
     }
