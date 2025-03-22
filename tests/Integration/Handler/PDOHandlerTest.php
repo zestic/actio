@@ -1,78 +1,75 @@
 <?php
 declare(strict_types=1);
 
+namespace Tests\Integration\Handler;
+
 use Actio\Entity\DataPoint;
 use Actio\Handler\Driver\MySQLPDODriver;
 use Actio\Handler\PDOHandler;
+use PDO;
+use PHPUnit\Framework\TestCase;
+use Tests\Integration\DatabaseTestTrait;
 
-it ('saves a data point', function () {
-    $driver = new MySQLPDODriver();
-    $driver->createTable();
-    $db = $driver->db();
+class PDOHandlerTest extends TestCase
+{
+    use DatabaseTestTrait;
+    public function testSavesDataPoint(): void
+    {
+        $driver = new MySQLPDODriver();
+        $driver->createTable();
+        $db = $driver->db();
 
-    $handler = new PDOHandler($driver);
+        $handler = new PDOHandler($driver);
 
-    $activity = [
-        'type' => 'test',
-    ];
-    $actor = [
-        'type' => 'tester',
-    ];
-    $context = [
-        'could' => 'be anything'
-    ];
-    $summary = "Testing if it saved";
-    $target = [
-        'type' => 'code',
-    ];
-    $dataPoint = (new DataPoint())
-        ->setActivity($activity)
-        ->setActor($actor)
-        ->setContext($context)
-        ->setLevel('warning')
-        ->setSummary($summary)
-        ->setTarget($target);
+        $activity = [
+            'type' => 'test',
+        ];
+        $actor = [
+            'type' => 'tester',
+        ];
+        $context = [
+            'could' => 'be anything'
+        ];
+        $summary = "Testing if it saved";
+        $target = [
+            'type' => 'code',
+        ];
+        $dataPoint = (new DataPoint())
+            ->setActivity($activity)
+            ->setActor($actor)
+            ->setContext($context)
+            ->setLevel('warning')
+            ->setSummary($summary)
+            ->setTarget($target);
 
-    $handler->save($dataPoint);
+        $handler->save($dataPoint);
 
-    expect($dataPoint->getId())->not->toBeNull();
+        $this->assertNotNull($dataPoint->getId());
 
-    $statement = $db->query('SELECT * FROM `actio_data_points` WHERE `id` = '. $dataPoint->getId());
-    $result = $statement->fetch(PDO::FETCH_ASSOC);
+        $statement = $db->query('SELECT * FROM `actio_data_points` WHERE `id` = '. $dataPoint->getId());
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-    expect($result['activity'])
-        ->json()
-        ->type->toBe($activity['type']);
+        $activityData = json_decode($result['activity'], true);
+        $this->assertEquals($activity['type'], $activityData['type']);
+        $this->assertEquals($activity['type'], $result['activity_type']);
 
-    expect($result['activity_type'])
-        ->toBe($activity['type']);
+        $actorData = json_decode($result['actor'], true);
+        $this->assertEquals($actor['type'], $actorData['type']);
+        $this->assertEquals($actor['type'], $result['actor_type']);
 
-    expect($result['actor'])
-        ->json()
-        ->type->toBe($actor['type']);
+        $contextData = json_decode($result['context'], true);
+        $this->assertEquals($context['could'], $contextData['could']);
 
-    expect($result['actor_type'])
-        ->toBe($actor['type']);
+        $this->assertNotNull($result['date']);
+        $this->assertEquals($dataPoint->getId(), $result['id']);
+        $this->assertEquals('warning', $result['level']);
+        $this->assertEquals($summary, $result['summary']);
 
-    expect($result['context'])
-        ->json()
-        ->could->toBe($context['could']);
+        $targetData = json_decode($result['target'], true);
+        $this->assertEquals($target['type'], $targetData['type']);
+        $this->assertEquals($target['type'], $result['target_type']);
 
-    expect($result['date'])->not->toBeNull();
-
-    expect($result['id'])->toEqual($dataPoint->getId());
-
-    expect($result['level'])->toBe('warning');
-
-    expect($result['summary'])->toBe($summary);
-
-    expect($result['target'])
-        ->json()
-        ->type->toBe($target['type']);
-
-    expect($result['target_type'])
-        ->toBe($target['type']);
-
-    $db->exec('DROP TABLE IF EXISTS `actio_data_points`');
-});
+        $db->exec('DROP TABLE IF EXISTS `actio_data_points`');
+    }
+}
 

@@ -1,10 +1,15 @@
 <?php
 declare(strict_types=1);
 
+namespace Tests\Unit\Actio\Entity;
+
+use PHPUnit\Framework\TestCase;
 use Tests\Support\Data\Factory\Entity\DataPointFactory;
 
-describe('DataPoint', function () {
-    test('toArray', function () {
+class DataPointTest extends TestCase
+{
+    public function testToArray(): void
+    {
         $dataPoint = DataPointFactory::make([
             'id' => 42,
         ]);
@@ -18,9 +23,11 @@ describe('DataPoint', function () {
             'summary'  => $dataPoint->getSummary(),
             'target'   => $dataPoint->getTarget(),
         ];
-        expect($dataPoint->toArray())->toEqual($expectedData);
-    });
-    test('toArrayForNewDataPoint', function () {
+        $this->assertEquals($expectedData, $dataPoint->toArray());
+    }
+
+    public function testToArrayForNewDataPoint(): void
+    {
         $dataPoint = DataPointFactory::make([
             'date' => null,
         ]);
@@ -32,8 +39,6 @@ describe('DataPoint', function () {
             'summary'  => $dataPoint->getSummary(),
             'target'   => $dataPoint->getTarget(),
         ];
-        expect($dataPoint->toArray())->toEqual($expectedData);
-    });
-});
-
-$override = [];
+        $this->assertEquals($expectedData, $dataPoint->toArray());
+    }
+}
