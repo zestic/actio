@@ -3,8 +3,6 @@ parameters:
   paths:
     - src
     - tests
-  ignoreErrors:
-    - '#PHPUnit\\Framework\\TestCase::#'
 
 includes:
   - vendor/phpstan/phpstan-phpunit/extension.neon

@@ -10,6 +10,7 @@ class DataPointTest extends TestCase
 {
     public function testToArray(): void
     {
+        /** @var \Actio\Entity\DataPoint $dataPoint */
         $dataPoint = DataPointFactory::make([
             'id' => 42,
         ]);
@@ -17,7 +18,7 @@ class DataPointTest extends TestCase
             'activity' => $dataPoint->getActivity(),
             'actor'    => $dataPoint->getActor(),
             'context'  => $dataPoint->getContext(),
-            'date'     => $dataPoint->getDate()->format('Y-m-d\TH:i:s\Z'),
+            'date'     => $dataPoint->getDate()?->format('Y-m-d\TH:i:s\Z'),
             'id'       => 42,
             'level'    => $dataPoint->getLevel(),
             'summary'  => $dataPoint->getSummary(),
@@ -28,6 +29,7 @@ class DataPointTest extends TestCase
 
     public function testToArrayForNewDataPoint(): void
     {
+        /** @var \Actio\Entity\DataPoint $dataPoint */
         $dataPoint = DataPointFactory::make([
             'date' => null,
         ]);

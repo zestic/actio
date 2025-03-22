@@ -10,10 +10,18 @@ use Tests\Support\Data\Factory\Entity\DataPointFactory as SupportDataPointFactor
 
 class DataPointFactoryTest extends TestCase
 {
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>|string
+     */
     private function setAsArrayOrJson(array $data): array|string
     {
         if (rand(0,1)) {
-            return json_encode($data);
+            $json = json_encode($data);
+            if ($json === false) {
+                return $data;
+            }
+            return $json;
         }
 
         return $data;
@@ -21,7 +29,9 @@ class DataPointFactoryTest extends TestCase
 
     public function testCreatesNewInstance(): void
     {
+        /** @var array<string, mixed> $data */
         $data = SupportDataPointFactory::make(['asArray' => true]);
+        $this->assertIsArray($data);
 
         $activity = $this->setAsArrayOrJson($data['activity']);
         $actor = $this->setAsArrayOrJson($data['actor']);
@@ -39,6 +49,7 @@ class DataPointFactoryTest extends TestCase
 
         $data['date'] = null;
         $data['id'] = null;
+        /** @var \Actio\Entity\DataPoint $expected */
         $expected = SupportDataPointFactory::make($data);
 
         $this->assertInstanceOf(DataPoint::class, $dataPoint);

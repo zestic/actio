@@ -7,20 +7,30 @@ use DateTimeImmutable;
 
 class DataPoint
 {
+    /** @var array<string, mixed> */
     private array $activity;
+
+    /** @var array<string, mixed> */
     private array $actor;
+
+    /** @var array<string, mixed>|null */
     private ?array $context;
+
     private ?DateTimeImmutable $date = null;
     private int|string|null $id = null;
     private ?string $level;
     private ?string $summary;
+
+    /** @var array<string, mixed> */
     private array $target;
 
+    /** @return array<string, mixed> */
     public function getActivity(): array
     {
         return $this->activity;
     }
 
+    /** @param array<string, mixed> $activity */
     public function setActivity(array $activity): DataPoint
     {
         $this->activity = $activity;
@@ -28,11 +38,13 @@ class DataPoint
         return $this;
     }
 
+    /** @return array<string, mixed> */
     public function getActor(): array
     {
         return $this->actor;
     }
 
+    /** @param array<string, mixed> $actor */
     public function setActor(array $actor): DataPoint
     {
         $this->actor = $actor;
@@ -40,11 +52,13 @@ class DataPoint
         return $this;
     }
 
+    /** @return array<string, mixed>|null */
     public function getContext(): ?array
     {
         return $this->context;
     }
 
+    /** @param array<string, mixed>|null $context */
     public function setContext(?array $context): DataPoint
     {
         $this->context = $context;
@@ -52,7 +66,7 @@ class DataPoint
         return $this;
     }
 
-    public function getDate(): DateTimeImmutable
+    public function getDate(): ?DateTimeImmutable
     {
         return $this->date;
     }
@@ -102,11 +116,13 @@ class DataPoint
         return $this;
     }
 
+    /** @return array<string, mixed> */
     public function getTarget(): array
     {
         return $this->target;
     }
 
+    /** @param array<string, mixed> $target */
     public function setTarget(array $target): DataPoint
     {
         $this->target = $target;
@@ -116,9 +132,11 @@ class DataPoint
 
     public function __toString(): string
     {
-        return json_encode($this->toArray());
+        $json = json_encode($this->toArray());
+        return $json === false ? '' : $json;
     }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         $data = [

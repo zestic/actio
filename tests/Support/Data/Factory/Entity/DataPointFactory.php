@@ -9,8 +9,15 @@ use Tests\Support\Data\Factory\AbstractFactory;
 
 use function PHPUnit\Framework\arrayHasKey;
 
+/**
+ * @extends AbstractFactory<DataPoint|array<string, mixed>>
+ */
 class DataPointFactory extends AbstractFactory
 {
+    /**
+     * @param array<string, mixed> $override
+     * @return DataPoint|array<string, mixed>
+     */
     protected function create(array $override): DataPoint|array
     {
         $asArray = isset($override['asArray']) && $override['asArray'] === true;
@@ -49,6 +56,7 @@ class DataPointFactory extends AbstractFactory
             ->setTarget($target);
     }
 
+    /** @return array<string, string> */
     private function createActivity(): array
     {
         return [
@@ -56,6 +64,7 @@ class DataPointFactory extends AbstractFactory
         ];
     }
 
+    /** @return array<string, string> */
     private function createActor(): array
     {
         return [
@@ -63,6 +72,7 @@ class DataPointFactory extends AbstractFactory
         ];
     }
 
+    /** @return array<string, string> */
     private function createContext(): array
     {
         $items = $this->faker->numberBetween(3,6);
@@ -75,6 +85,7 @@ class DataPointFactory extends AbstractFactory
         return $context;
     }
 
+    /** @return array<string, string> */
     private function createTarget(): array
     {
         return [
@@ -82,6 +93,7 @@ class DataPointFactory extends AbstractFactory
         ];
     }
 
+    /** @param array<string, mixed> $override */
     private function determineDate(array $override): ?DateTimeImmutable
     {
         if (array_key_exists('date', $override)) {

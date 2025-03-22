@@ -20,6 +20,7 @@ class MySQLPDODriverTest extends TestCase
         $this->assertTrue($result);
 
         $statement = $db->query('SHOW TABLES LIKE "actio_data_points"');
+        $this->assertNotFalse($statement, 'Query failed');
         $this->assertEquals(1, $statement->rowCount());
 
         $db->exec('DROP TABLE IF EXISTS `actio_data_points`');

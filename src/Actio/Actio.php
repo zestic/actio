@@ -17,6 +17,12 @@ class Actio
         self::$handler = $handler;
     }
 
+    /**
+     * @param array<string, mixed>|JsonSerializable|string $activity
+     * @param array<string, mixed>|JsonSerializable|string $actor
+     * @param array<string, mixed>|JsonSerializable|string $target
+     * @param array<string, mixed>|null $context
+     */
     public static function record(
         array|JsonSerializable|string $activity,
         array|JsonSerializable|string $actor,
@@ -24,7 +30,7 @@ class Actio
         ?string $summary = null,
         ?array $context = null,
         ?string $level = null,
-    ) {
+    ): void {
         $dataPoint = (new DataPointFactory())
             ->createFromRecord(
                 $activity,

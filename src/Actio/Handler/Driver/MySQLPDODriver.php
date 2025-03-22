@@ -13,9 +13,25 @@ class MySQLPDODriver implements PDODriverInterface
     public function __construct()
     {
         $dbname = getenv('ACTIO_MYSQL_DB_NAME');
+        if ($dbname === false) {
+            throw new \RuntimeException('ACTIO_MYSQL_DB_NAME environment variable is not set');
+        }
+
         $host = getenv('ACTIO_MYSQL_HOST');
+        if ($host === false) {
+            throw new \RuntimeException('ACTIO_MYSQL_HOST environment variable is not set');
+        }
+
         $password = getenv('ACTIO_MYSQL_PASSWORD');
+        if ($password === false) {
+            throw new \RuntimeException('ACTIO_MYSQL_PASSWORD environment variable is not set');
+        }
+
         $username = getenv('ACTIO_MYSQL_USERNAME');
+        if ($username === false) {
+            throw new \RuntimeException('ACTIO_MYSQL_USERNAME environment variable is not set');
+        }
+
         $dsn = "mysql:host={$host};dbname={$dbname};charset=utf8mb4";
         $this->db = new PDO($dsn, $username, $password);
         $table = getenv('ACTIO_MYSQL_TABLE');

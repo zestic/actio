@@ -47,7 +47,9 @@ class PDOHandlerTest extends TestCase
         $this->assertNotNull($dataPoint->getId());
 
         $statement = $db->query('SELECT * FROM `actio_data_points` WHERE `id` = '. $dataPoint->getId());
+        $this->assertNotFalse($statement, 'Query failed');
         $result = $statement->fetch(PDO::FETCH_ASSOC);
+        $this->assertNotFalse($result, 'No data found');
 
         $activityData = json_decode($result['activity'], true);
         $this->assertEquals($activity['type'], $activityData['type']);

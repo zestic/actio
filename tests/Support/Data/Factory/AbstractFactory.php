@@ -6,6 +6,9 @@ namespace Tests\Support\Data\Factory;
 use Faker\Factory;
 use Faker\Generator;
 
+/**
+ * @template T
+ */
 abstract class AbstractFactory
 {
     protected Generator $faker;
@@ -15,21 +18,30 @@ abstract class AbstractFactory
         $this->faker = Factory::create();
     }
 
+    /**
+     * @param array<string, mixed>|null $override
+     * @return T
+     */
     public static function make(array $override = null): mixed
     {
-        $factory = self::createFactory();
+        $factory = static::createFactory();
         $override = $override ? (array)$override : [];
 
         return $factory->create($override);
     }
 
+    /**
+     * @param array<string, mixed> $globalOverride
+     * @param array<string, mixed> $individualOverrides
+     * @return array<int, T>
+     */
     public static function many(
         int $total,
         array $globalOverride = [],
         array $individualOverrides = []
     ): array {
         $objects = [];
-        $factory = self::createFactory();
+        $factory = static::createFactory();
         $globalOverride = $globalOverride ? (array)$globalOverride : [];
         for ($i = 0; $i < $total; $i++) {
             $individualOverrides = $individualOverrides ? (array)$individualOverrides : [];
@@ -39,10 +51,18 @@ abstract class AbstractFactory
         return $objects;
     }
 
+    /**
+     * @param array<string, mixed> $override
+     * @return mixed
+     */
     abstract protected function create(array $override): mixed;
 
-    private static function createFactory(): self
+    /**
+     * @return static
+     */
+    protected static function createFactory(): static
     {
+        /** @phpstan-ignore-next-line */
         return new static();
     }
 }
