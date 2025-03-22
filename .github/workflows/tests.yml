@@ -55,6 +55,15 @@ jobs:
     - name: Copy .env.testing
       run: cp .env.example .env.testing
 
+    - name: Install MySQL client
+      run: sudo apt-get install -y mysql-client
+
+    - name: Wait for MySQL
+      run: |
+        while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"test" -p"password1" --silent; do
+          sleep 1
+        done
+
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
