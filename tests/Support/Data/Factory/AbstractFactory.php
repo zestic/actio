@@ -19,7 +19,7 @@ abstract class AbstractFactory
     }
 
     /**
-     * @param array<string, mixed>|null $override
+     * @param array<string, mixed> $override
      * @return T
      */
     public static function make(array $override = []): mixed
