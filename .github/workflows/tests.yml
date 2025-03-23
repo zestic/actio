@@ -22,6 +22,11 @@ jobs:
           MYSQL_DATABASE: actio_test
         ports:
           - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -u root -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
     - uses: actions/checkout@v3
@@ -53,8 +58,10 @@ jobs:
 
     - name: Wait for MySQL
       run: |
-        while ! mysqladmin ping -h"127.0.0.1" --port=3306 -u"root" -p"root" --silent; do
+        echo "\nTrying connection..."
+        while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"root" -p"root" --silent; do
           echo "Waiting for MySQL..."
+          docker ps
           sleep 2
         done
 
