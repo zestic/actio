@@ -18,15 +18,11 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: actio_test
+          MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost -u root -proot"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
     - uses: actions/checkout@v3
@@ -56,14 +52,9 @@ jobs:
     - name: Install MySQL client
       run: sudo apt-get install -y mysql-client
 
-    - name: Wait for MySQL
+    - name: Verify MySQL connection
       run: |
-        echo "\nTrying connection..."
-        while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"root" -p"root" --silent; do
-          echo "Waiting for MySQL..."
-          docker ps
-          sleep 2
-        done
+        mysql --host 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
 
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
