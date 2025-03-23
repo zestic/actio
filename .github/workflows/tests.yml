@@ -19,10 +19,11 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: actio_test
         ports:
-          - 3306:3306
+          - "3306:3306"
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="mysqladmin ping --protocol=TCP"
           --health-interval=5s
           --health-timeout=2s
           --health-retries=5
@@ -59,16 +60,10 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y mysql-client
-        echo "Checking MySQL status..."
-        sudo service mysql status || true
-        echo "Checking MySQL process..."
-        ps aux | grep mysql || true
-        echo "Checking MySQL socket..."
-        ls -la /var/run/mysqld/ || true
-        echo "Attempting connection..."
-        mysqladmin ping -h"127.0.0.1" --port=3306 -u"root" -p"root" || true
-        echo "Creating database..."
-        mysql -h"127.0.0.1" --port=3306 -u"root" -p"root" -e "CREATE DATABASE IF NOT EXISTS actio_test;" || true
+        echo "Waiting for MySQL..."
+        while ! mysqladmin ping --protocol=TCP -h"127.0.0.1" -P"3306" -u"root" -p"root" --silent; do
+          sleep 1
+        done
 
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist

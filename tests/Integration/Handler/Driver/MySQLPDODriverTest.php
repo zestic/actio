@@ -26,3 +26,4 @@ class MySQLPDODriverTest extends TestCase
         $db->exec('DROP TABLE IF EXISTS `actio_data_points`');
     }
 }
+

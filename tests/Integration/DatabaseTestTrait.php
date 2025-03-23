@@ -65,7 +65,7 @@ trait DatabaseTestTrait
         $lastError = null;
         while ($attempts > 0) {
             try {
-                $rootDsn = 'mysql:host=' . $host . ';charset=utf8mb4';
+                $rootDsn = 'mysql:host=' . $host . ';port=3306;charset=utf8mb4;protocol=tcp';
                 $connection = new PDO($rootDsn, $username, $password, [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_TIMEOUT => 3,
