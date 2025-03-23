@@ -24,6 +24,16 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: password1
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
     - uses: actions/checkout@v3
 
@@ -31,7 +41,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        extensions: pdo, pdo_mysql
+        extensions: pdo, pdo_mysql, pdo_pgsql
         coverage: pcov
         tools: composer:v2
 
@@ -53,11 +63,21 @@ jobs:
         ACTIO_MYSQL_DB_NAME=actio_test
         ACTIO_MYSQL_USERNAME=root
         ACTIO_MYSQL_PASSWORD=root
+
+        ACTIO_PG_HOST=localhost
+        ACTIO_PG_DB_NAME=test
+        ACTIO_PG_SCHEMA=actio_test
+        ACTIO_PG_USERNAME=test
+        ACTIO_PG_PASSWORD=password1
         EOL
 
     - name: Verify MySQL connection
       run: |
         mysql --host 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
+
+    - name: Set up PostgreSQL schema
+      run: |
+        PGPASSWORD=password1 psql -h localhost -U test -d test -c "CREATE SCHEMA IF NOT EXISTS actio_test;"
 
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
@@ -72,5 +92,10 @@ jobs:
         ACTIO_MYSQL_DB_NAME: actio_test
         ACTIO_MYSQL_USERNAME: root
         ACTIO_MYSQL_PASSWORD: root
+        ACTIO_PG_HOST: localhost
+        ACTIO_PG_DB_NAME: test
+        ACTIO_PG_SCHEMA: actio_test
+        ACTIO_PG_USERNAME: test
+        ACTIO_PG_PASSWORD: password1
 
 
