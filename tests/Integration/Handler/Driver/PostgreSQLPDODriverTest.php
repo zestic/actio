@@ -18,7 +18,7 @@ class PostgreSQLPDODriverTest extends TestCase
         $db->exec('DROP TABLE IF EXISTS actio_test.actio_data_points');
 
         $result = $driver->createTable();
-        $this->assertTrue($result);
+        $this->assertTrue((bool) $result, 'Table creation failed');
 
         $statement = $db->query("SELECT EXISTS (
             SELECT FROM pg_tables 

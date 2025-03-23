@@ -24,6 +24,9 @@ class PostgreSQLPDODriver extends PDODriver
         return getenv('ACTIO_PG_PASSWORD') ?: 'password1';
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     protected function getOptions(): array
     {
         return [
@@ -32,7 +35,7 @@ class PostgreSQLPDODriver extends PDODriver
         ];
     }
 
-    public function createTable(): bool
+    public function createTable(): bool|int
     {
         $schema = getenv('ACTIO_PG_SCHEMA') ?: 'actio_test';
         $sql = "CREATE TABLE IF NOT EXISTS {$schema}.actio_data_points (

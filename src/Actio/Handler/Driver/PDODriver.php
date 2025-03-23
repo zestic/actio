@@ -12,8 +12,14 @@ abstract class PDODriver
     abstract protected function createDsn(): string;
     abstract protected function getUsername(): string;
     abstract protected function getPassword(): string;
+    /**
+     * @return array<int, mixed>
+     */
     abstract protected function getOptions(): array;
-    abstract public function createTable(): bool;
+    /**
+     * @return bool|int
+     */
+    abstract public function createTable(): bool|int;
 
     public function db(): PDO
     {
