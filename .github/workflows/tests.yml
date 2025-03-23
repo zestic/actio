@@ -14,11 +14,14 @@ jobs:
       matrix:
         php-version: ['8.3', '8.4']
 
-    env:
-      ACTIO_MYSQL_HOST: 127.0.0.1
-      ACTIO_MYSQL_DB_NAME: actio_test
-      ACTIO_MYSQL_USERNAME: root
-      ACTIO_MYSQL_PASSWORD: root
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: actio_test
+        ports:
+          - 3306:3306
 
     steps:
     - uses: actions/checkout@v3
@@ -48,17 +51,12 @@ jobs:
     - name: Install MySQL client
       run: sudo apt-get install -y mysql-client
 
-    - name: Setup MySQL
+    - name: Wait for MySQL
       run: |
-        sudo systemctl start mysql.service
-        # Reset root password
-        sudo mysqld_safe --skip-grant-tables --skip-networking &
-        sleep 5
-        sudo mysql -e "FLUSH PRIVILEGES; ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
-        sudo mysqladmin -uroot -proot shutdown
-        sudo systemctl start mysql.service
-        # Create test database
-        mysql -uroot -proot -e 'CREATE DATABASE IF NOT EXISTS actio_test;'
+        while ! mysqladmin ping -h"127.0.0.1" --port=3306 -u"root" -p"root" --silent; do
+          echo "Waiting for MySQL..."
+          sleep 2
+        done
 
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
@@ -68,6 +66,10 @@ jobs:
 
     - name: Run Tests with Coverage
       run: vendor/bin/phpunit --coverage-clover coverage.xml
-
+      env:
+        ACTIO_MYSQL_HOST: 127.0.0.1
+        ACTIO_MYSQL_DB_NAME: actio_test
+        ACTIO_MYSQL_USERNAME: root
+        ACTIO_MYSQL_PASSWORD: root
 
 
