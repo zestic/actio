@@ -3,17 +3,17 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Handler\Driver;
 
-use Actio\Handler\Driver\PostgreSQLPDODriver;
+use Actio\Handler\Driver\PostgresPDODriver;
 use PHPUnit\Framework\TestCase;
 use Tests\Integration\DatabaseTestTrait;
 
-class PostgreSQLPDODriverTest extends TestCase
+class PostgresPDODriverTest extends TestCase
 {
     use DatabaseTestTrait;
 
     public function testCreatesDataPointTable(): void
     {
-        $driver = new PostgreSQLPDODriver();
+        $driver = new PostgresPDODriver();
         $db = $driver->db();
         $db->exec('DROP TABLE IF EXISTS actio_test.actio_data_points');
 

@@ -7,21 +7,40 @@ use PDO;
 
 class PostgresPDODriver extends PDODriver implements PDODriverInterface
 {
+    private string $schema;
+
     protected function createDsn(): string
     {
-        $host = getenv('ACTIO_PG_HOST') ?: 'localhost';
-        $dbName = getenv('ACTIO_PG_DB_NAME') ?: 'test';
-        return "pgsql:host={$host};dbname={$dbName}";
+        $host = getenv('ACTIO_PG_HOST');
+        if ($host === false) {
+            throw new \RuntimeException('ACTIO_PG_HOST environment variable is not set');
+        }
+
+        $dbname = getenv('ACTIO_PG_DB_NAME');
+        if ($dbname === false) {
+            throw new \RuntimeException('ACTIO_PG_DB_NAME environment variable is not set');
+        }
+
+        $port = getenv('ACTIO_PG_PORT') ?: '5432';
+        return "pgsql:host={$host};port={$port};dbname={$dbname}";
     }
 
     protected function getUsername(): string
     {
-        return getenv('ACTIO_PG_USERNAME') ?: 'test';
+        $username = getenv('ACTIO_PG_USERNAME');
+        if ($username === false) {
+            throw new \RuntimeException('ACTIO_PG_USERNAME environment variable is not set');
+        }
+        return $username;
     }
 
     protected function getPassword(): string
     {
-        return getenv('ACTIO_PG_PASSWORD') ?: 'password1';
+        $password = getenv('ACTIO_PG_PASSWORD');
+        if ($password === false) {
+            throw new \RuntimeException('ACTIO_PG_PASSWORD environment variable is not set');
+        }
+        return $password;
     }
 
     /**
@@ -35,22 +54,35 @@ class PostgresPDODriver extends PDODriver implements PDODriverInterface
         ];
     }
 
-    public function table(): string
-    {
-        $schema = getenv('ACTIO_PG_SCHEMA') ?: 'actio_test';
-        return "{$schema}.actio_data_points";
-    }
-
     public function createTable(): bool
     {
-        $sql = "CREATE TABLE IF NOT EXISTS {$this->table()} (
-            id SERIAL PRIMARY KEY,
-            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            level VARCHAR(10) NOT NULL,
-            message TEXT NOT NULL,
-            context JSONB
-        )";
+        $schema = getenv('ACTIO_PG_SCHEMA');
+        if (!$schema) {
+            $schema = 'public';
+        }
+        $this->schema = $schema;
 
-        return $this->db()->exec($sql) !== false;
+        $sql = <<<SQL
+CREATE TABLE IF NOT EXISTS {$this->schema}.{$this->table()} (
+    id SERIAL PRIMARY KEY,
+    activity JSONB NOT NULL,
+    activity_type VARCHAR(255) NOT NULL,
+    actor JSONB NOT NULL,
+    actor_type VARCHAR(255) NOT NULL,
+    context JSONB DEFAULT NULL,
+    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    level VARCHAR(50) CHECK (level IN ('emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug')) DEFAULT NULL,
+    summary VARCHAR(255) DEFAULT NULL,
+    target JSONB NOT NULL,
+    target_type VARCHAR(255) NOT NULL
+);
+SQL;
+
+        return false !== $this->db()->exec($sql);
+    }
+
+    public function table(): string
+    {
+        return getenv('ACTIO_PG_TABLE') ?: 'actio_data_points';
     }
 }
