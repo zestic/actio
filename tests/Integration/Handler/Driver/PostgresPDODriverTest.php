@@ -15,19 +15,22 @@ class PostgresPDODriverTest extends TestCase
     {
         $driver = new PostgresPDODriver();
         $db = $driver->db();
-        $db->exec('DROP TABLE IF EXISTS actio_test.actio_data_points');
+        $schema = getenv('ACTIO_PG_SCHEMA') ?: 'public';
+        $db->exec('DROP TABLE IF EXISTS ' . $schema . '.' . $driver->table());
 
         $result = $driver->createTable();
         $this->assertTrue((bool) $result, 'Table creation failed');
 
+        $schema = getenv('ACTIO_PG_SCHEMA') ?: 'public';
         $statement = $db->query("SELECT EXISTS (
             SELECT FROM pg_tables 
-            WHERE schemaname = 'actio_test' 
-            AND tablename = 'actio_data_points'
+            WHERE schemaname = '{$schema}' 
+            AND tablename = '" . $driver->table() . "'
         )");
         $this->assertNotFalse($statement, 'Query failed');
         $this->assertTrue($statement->fetchColumn());
 
-        $db->exec('DROP TABLE IF EXISTS actio_test.actio_data_points');
+        $schema = getenv('ACTIO_PG_SCHEMA') ?: 'public';
+        $db->exec('DROP TABLE IF EXISTS ' . $schema . '.' . $driver->table());
     }
 }

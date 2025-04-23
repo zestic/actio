@@ -5,7 +5,7 @@ namespace Actio\Handler\Driver;
 
 use PDO;
 
-abstract class PDODriver
+abstract class PDODriver implements PDODriverInterface
 {
     private ?PDO $connection = null;
 
@@ -20,6 +20,8 @@ abstract class PDODriver
      * @return bool|int
      */
     abstract public function createTable(): bool|int;
+
+    abstract public function table(): string;
 
     public function db(): PDO
     {

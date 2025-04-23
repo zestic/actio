@@ -8,7 +8,10 @@ use PDO;
 
 interface PDODriverInterface
 {
-    public function createTable(): bool;
+    /**
+     * @return bool|int
+     */
+    public function createTable(): bool|int;
 
     public function db(): PDO;
 

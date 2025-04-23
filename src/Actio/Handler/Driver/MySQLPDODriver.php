@@ -5,71 +5,78 @@ namespace Actio\Handler\Driver;
 
 use PDO;
 
-class MySQLPDODriver implements PDODriverInterface
+class MySQLPDODriver extends PDODriver implements PDODriverInterface
 {
-    private PDO $db;
-    private string $table;
 
-    public function __construct()
+    protected function createDsn(): string
     {
-        $dbname = getenv('ACTIO_MYSQL_DB_NAME');
-        if ($dbname === false) {
-            throw new \RuntimeException('ACTIO_MYSQL_DB_NAME environment variable is not set');
-        }
-
         $host = getenv('ACTIO_MYSQL_HOST');
-        if ($host === false) {
+        if (!$host) {
             throw new \RuntimeException('ACTIO_MYSQL_HOST environment variable is not set');
         }
 
-        $password = getenv('ACTIO_MYSQL_PASSWORD');
-        if ($password === false) {
-            throw new \RuntimeException('ACTIO_MYSQL_PASSWORD environment variable is not set');
+        $dbname = getenv('ACTIO_MYSQL_DB_NAME');
+        if (!$dbname) {
+            throw new \RuntimeException('ACTIO_MYSQL_DB_NAME environment variable is not set');
         }
 
+        return "mysql:host={$host};dbname={$dbname};charset=utf8mb4";
+    }
+
+    protected function getUsername(): string
+    {
         $username = getenv('ACTIO_MYSQL_USERNAME');
-        if ($username === false) {
+        if (!$username) {
             throw new \RuntimeException('ACTIO_MYSQL_USERNAME environment variable is not set');
         }
+        return $username;
+    }
 
-        $dsn = "mysql:host={$host};dbname={$dbname};charset=utf8mb4";
-        $this->db = new PDO($dsn, $username, $password);
-        $table = getenv('ACTIO_MYSQL_TABLE');
-        if (!$table) {
-            $table = 'actio_data_points';
+    protected function getPassword(): string
+    {
+        $password = getenv('ACTIO_MYSQL_PASSWORD');
+        if (!$password) {
+            throw new \RuntimeException('ACTIO_MYSQL_PASSWORD environment variable is not set');
         }
-        $this->table = $table;
+        return $password;
     }
 
     public function createTable(): bool
     {
         $sql = <<<SQL
-CREATE TABLE IF NOT EXISTS {$this->table} (
+CREATE TABLE IF NOT EXISTS {$this->table()} (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `activity` json NOT NULL,
     `activity_type` varchar(255) NOT NULL,
     `actor` json NOT NULL,
     `actor_type` varchar(255) NOT NULL,
     `context` json DEFAULT NULL,
-    `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `level` enum('emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug') DEFAULT NULL,
+    `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `level` varchar(50) CHECK (level IN ('emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug')) DEFAULT NULL,
     `summary` varchar(255) DEFAULT NULL,
     `target` json NOT NULL,
     `target_type` varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SQL;
 
-        return false !== $this->db->exec($sql);
+        $result = $this->db()->exec($sql);
+        return $result !== false;
     }
 
-    public function db(): PDO
+    /**
+     * @return array<int, mixed>
+     */
+    protected function getOptions(): array
     {
-        return $this->db;
+        return [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ];
     }
 
     public function table(): string
     {
-        return $this->table;
+        return getenv('ACTIO_MYSQL_TABLE') ?: 'actio_data_points';
     }
 }

@@ -46,7 +46,7 @@ class PDOHandlerTest extends TestCase
 
         $this->assertNotNull($dataPoint->getId());
 
-        $statement = $db->query('SELECT * FROM `actio_data_points` WHERE `id` = '. $dataPoint->getId());
+        $statement = $db->query('SELECT * FROM `' . $driver->table() . '` WHERE `id` = '. $dataPoint->getId());
         $this->assertNotFalse($statement, 'Query failed');
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         $this->assertNotFalse($result, 'No data found');
@@ -71,7 +71,7 @@ class PDOHandlerTest extends TestCase
         $this->assertEquals($target['type'], $targetData['type']);
         $this->assertEquals($target['type'], $result['target_type']);
 
-        $db->exec('DROP TABLE IF EXISTS `actio_data_points`');
+        $db->exec('DROP TABLE IF EXISTS `' . $driver->table() . '`');
     }
 }
 

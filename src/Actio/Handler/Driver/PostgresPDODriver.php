@@ -12,12 +12,12 @@ class PostgresPDODriver extends PDODriver implements PDODriverInterface
     protected function createDsn(): string
     {
         $host = getenv('ACTIO_PG_HOST');
-        if ($host === false) {
+        if (!$host) {
             throw new \RuntimeException('ACTIO_PG_HOST environment variable is not set');
         }
 
         $dbname = getenv('ACTIO_PG_DB_NAME');
-        if ($dbname === false) {
+        if (!$dbname) {
             throw new \RuntimeException('ACTIO_PG_DB_NAME environment variable is not set');
         }
 
@@ -28,7 +28,7 @@ class PostgresPDODriver extends PDODriver implements PDODriverInterface
     protected function getUsername(): string
     {
         $username = getenv('ACTIO_PG_USERNAME');
-        if ($username === false) {
+        if (!$username) {
             throw new \RuntimeException('ACTIO_PG_USERNAME environment variable is not set');
         }
         return $username;
@@ -37,7 +37,7 @@ class PostgresPDODriver extends PDODriver implements PDODriverInterface
     protected function getPassword(): string
     {
         $password = getenv('ACTIO_PG_PASSWORD');
-        if ($password === false) {
+        if (!$password) {
             throw new \RuntimeException('ACTIO_PG_PASSWORD environment variable is not set');
         }
         return $password;
@@ -62,6 +62,13 @@ class PostgresPDODriver extends PDODriver implements PDODriverInterface
         }
         $this->schema = $schema;
 
+        // Try to create schema if it doesn't exist
+        try {
+            $this->db()->exec("CREATE SCHEMA IF NOT EXISTS {$this->schema}");
+        } catch (\PDOException $e) {
+            // Ignore schema creation errors, assume schema exists
+        }
+
         $sql = <<<SQL
 CREATE TABLE IF NOT EXISTS {$this->schema}.{$this->table()} (
     id SERIAL PRIMARY KEY,
@@ -78,7 +85,8 @@ CREATE TABLE IF NOT EXISTS {$this->schema}.{$this->table()} (
 );
 SQL;
 
-        return false !== $this->db()->exec($sql);
+        $result = $this->db()->exec($sql);
+        return $result !== false;
     }
 
     public function table(): string

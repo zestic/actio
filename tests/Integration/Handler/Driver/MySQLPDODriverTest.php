@@ -14,16 +14,16 @@ class MySQLPDODriverTest extends TestCase
     {
         $driver = new MySQLPDODriver();
         $db = $driver->db();
-        $db->exec('DROP TABLE IF EXISTS `actio_data_points`');
+        $db->exec('DROP TABLE IF EXISTS `' . $driver->table() . '`');
 
         $result = $driver->createTable();
         $this->assertTrue($result);
 
-        $statement = $db->query('SHOW TABLES LIKE "actio_data_points"');
+        $statement = $db->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" . getenv('ACTIO_MYSQL_DB_NAME') . "' AND table_name = '" . $driver->table() . "'");
         $this->assertNotFalse($statement, 'Query failed');
-        $this->assertEquals(1, $statement->rowCount());
+        $this->assertEquals(1, $statement->fetchColumn());
 
-        $db->exec('DROP TABLE IF EXISTS `actio_data_points`');
+        $db->exec('DROP TABLE IF EXISTS `' . $driver->table() . '`');
     }
 }
 
