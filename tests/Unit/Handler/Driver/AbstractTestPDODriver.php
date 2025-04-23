@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Handler\Driver;
 
 use Actio\Handler\Driver\PDODriver;
-use PDO;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
@@ -14,7 +13,7 @@ use RuntimeException;
  * @covers \Actio\Handler\Driver\PDODriver
  * @codeCoverageIgnore
  */
-abstract class AbstractPDODriverTest extends TestCase
+abstract class AbstractTestPDODriver extends TestCase
 {
     protected PDODriver $driver;
     /** @var array<string, string|false> */

@@ -5,15 +5,13 @@ namespace Tests\Unit\Handler\Driver;
 
 use Actio\Handler\Driver\PostgresPDODriver;
 use Actio\Handler\Driver\PDODriver;
-use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use ReflectionMethod;
 use RuntimeException;
 
 /**
  * @covers \Actio\Handler\Driver\PostgresPDODriver
  */
-class PostgresPDODriverTest extends AbstractPDODriverTest
+class PostgresPDODriverTest extends AbstractTestPDODriver
 {
     /** @var array<int, string> */
     protected array $requiredEnvVars = [

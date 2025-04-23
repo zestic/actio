@@ -9,7 +9,7 @@ use Actio\Handler\Driver\PDODriver;
 /**
  * @covers \Actio\Handler\Driver\MySQLPDODriver
  */
-class MySQLPDODriverTest extends AbstractPDODriverTest
+class MySQLPDODriverTest extends AbstractTestPDODriver
 {
     /** @var array<int, string> */
     protected array $requiredEnvVars = [
